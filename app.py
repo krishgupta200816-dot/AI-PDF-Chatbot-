@@ -46,9 +46,9 @@ p, label, span {
 }
 
 .stButton > button {
-    background-color: #F6C6A8 !important;
-    color: #172B4D !important;
-    border: 1px solid #E5A985 !important;
+    background-color: #3B4B64 !important;
+    color: #F7F7F4 !important;
+    border: 1px solid #3B4B64 !important;
     border-radius: 10px;
     padding: 0.6rem 1.2rem;
     font-weight: 600;
@@ -57,13 +57,13 @@ p, label, span {
 
 .stButton > button p,
 .stButton > button span {
-    color: #172B4D !important;
+    color: #F7F7F4 !important;
 }
 
 .stButton > button:hover {
-    background-color: #F0B28C !important;
-    border-color: #D9966E !important;
-    color: #172B4D !important;
+    background-color: #2A374B !important;
+    border-color: #2A374B !important;
+    color: #F7F7F4 !important;
 }
 }
 

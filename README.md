@@ -1,6 +1,8 @@
 # AI-PDF-Chatbot-
 An AI-powered PDF chatbot using Gemini, FAISS and Sentence Transformers.
-# 🤖 AI-PDF-Chatbot
+# ✧ AI-PDF-Chatbot
+
+🚀 **Live App:** [Open AI-PDF-Chatbot](https://imj5yfijxhm6ismkkmhkkx.streamlit.app/)
 
 An AI-powered document assistant that helps users understand and explore PDF documents using Google Gemini, FAISS, and Sentence Transformers.
 

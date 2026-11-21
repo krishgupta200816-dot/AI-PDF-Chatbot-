@@ -189,6 +189,31 @@ def create_quiz(all_text, number_of_questions):
   )
   return ask_gemini(prompt)
 
+def create_summary(all_text):
+    prompt = f"""
+    You are an expert document summarisation assistant.
+
+    Summarise the following PDF content in a clear and organised way.
+
+    Follow this structure:
+
+    1. Overview
+    2. Main Topics
+    3. Important Concepts
+    4. Key Points
+    5. Conclusion
+
+    Use simple language.
+    Include important details.
+    Do not invent information that is not in the document.
+
+    PDF Content:
+    {all_text[:12000]}
+    """
+
+    return ask_gemini(prompt)
+
+
 # --- Streamlit UI ---
 uploaded_files = st.file_uploader("Choose PDF file(s)", type="pdf", accept_multiple_files=True)
 
@@ -208,9 +233,20 @@ if uploaded_files:
         if not chunks:
             st.warning("No readable text was found in the uploaded PDF.")
         else:
+            full_text = "\n\n".join(item["text"] for item in all_pages)
             with st.spinner("Preparing document search..."):
                 index = build_search_index(chunks)
             st.success(f"Ready: {len(all_pages)} text page(s), {len(chunks)} chunk(s).")
+            st.divider()
+
+        st.subheader("📄 PDF Summary")
+
+        if st.button("Generate Summary"):
+            with st.spinner("Generating your PDF summary..."):
+                summary = create_summary(full_text)
+
+            st.markdown("### Document Summary")
+            st.markdown(summary)
             
             st.subheader("Ask a question")
             question = st.text_input("Type your question about the PDF")

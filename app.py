@@ -46,19 +46,25 @@ p, label, span {
 }
 
 .stButton > button {
-    background-color: #526D91;
-    color: #FFFFFF;
-    border: 1px solid #526D91;
+    background-color: #F6C6A8 !important;
+    color: #172B4D !important;
+    border: 1px solid #E5A985 !important;
     border-radius: 10px;
     padding: 0.6rem 1.2rem;
     font-weight: 600;
     transition: all 0.2s ease;
 }
 
+.stButton > button p,
+.stButton > button span {
+    color: #172B4D !important;
+}
+
 .stButton > button:hover {
-    background-color: #344F73;
-    border-color: #344F73;
-    color: #FFFFFF;
+    background-color: #F0B28C !important;
+    border-color: #D9966E !important;
+    color: #172B4D !important;
+}
 }
 
 .stTextInput input {

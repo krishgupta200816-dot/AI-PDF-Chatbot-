@@ -3,9 +3,10 @@ import re
 import streamlit as st
 import faiss
 from dotenv import load_dotenv
-from pypdf import PdfReader
+from pypdf import PdfReader, errors
 from sentence_transformers import SentenceTransformer
 from google import genai
+from google.genai import errors
 
 # Read private settings from the env file
 load_dotenv()
@@ -67,12 +68,25 @@ def retrieve(question, chunks, index, top_k=4):
             results.append(chunks[int(position)])
     return results
 
+
 def ask_gemini(prompt):
-    response = client.models.generate_content(
-        model=MODEL_NAME,
-        contents=prompt
-    )
-    return response.text
+    try:
+        response = client.models.generate_content(
+            model=MODEL_NAME,
+            contents=prompt
+        )
+
+        return response.text
+
+    except errors.APIError as error:
+        if error.code in [500, 502, 503, 504, 429]:
+            return (
+                "Gemini is temporarily unavailable or busy. "
+                "Please wait a little and try again."
+            )
+
+        return f"Gemini API error: {error}"
+
 
 def answer_question(question, matches):
     context = "\n\n".join([f"Page {m['page']}: {m['text']}" for m in matches])

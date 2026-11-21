@@ -13,7 +13,81 @@ load_dotenv()
 API_KEY = os.getenv("GEMINI_API_KEY")
 MODEL_NAME = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
-st.set_page_config(page_title="AI PDF Chatbot", page_icon="🤖", layout="wide")
+st.set_page_config(page_title="AI PDF Chatbot", page_icon="◈", layout="wide")
+
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+.stApp {
+    background-color: #F7F7F4;
+    color: #172B4D;
+    font-family: 'Manrope', sans-serif;
+}
+
+html, body, [class*="css"] {
+    font-family: 'Manrope', sans-serif;
+}
+
+.block-container {
+    max-width: 1150px;
+    padding-top: 2.5rem;
+    padding-bottom: 3rem;
+}
+
+h1, h2, h3 {
+    color: #172B4D;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+p, label, span {
+    color: #44546A;
+}
+
+.stButton > button {
+    background-color: #526D91;
+    color: #FFFFFF;
+    border: 1px solid #526D91;
+    border-radius: 10px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.stButton > button:hover {
+    background-color: #344F73;
+    border-color: #344F73;
+    color: #FFFFFF;
+}
+
+.stTextInput input {
+    background-color: #FFFFFF;
+    border: 1px solid #D9DFE7;
+    border-radius: 9px;
+    color: #172B4D;
+}
+
+.stFileUploader {
+    background-color: #FFFFFF;
+    border: 1px dashed #AAB8CA;
+    border-radius: 12px;
+    padding: 12px;
+}
+
+div[data-testid="stVerticalBlockBorderWrapper"] {
+    background-color: #FFFFFF;
+    border: 1px solid #E4E7EC;
+    border-radius: 12px;
+}
+
+hr {
+    border-color: #E4E7EC;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
 st.title("AI-Powered PDF Chatbot")
 
 if not API_KEY:

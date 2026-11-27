@@ -3,7 +3,7 @@ import re
 import streamlit as st
 import faiss
 from dotenv import load_dotenv
-from pypdf import PdfReader, errors
+from pypdf import PdfReader
 from sentence_transformers import SentenceTransformer
 from google import genai
 from google.genai import errors
@@ -65,7 +65,7 @@ p, label, span {
     border-color: #2A374B !important;
     color: #F7F7F4 !important;
 }
-}
+
 
 .stTextInput input {
     background-color: #FFFFFF;

@@ -216,6 +216,9 @@ def create_summary(all_text):
 
 # --- Streamlit UI ---
 uploaded_files = st.file_uploader("Choose PDF file(s)", type="pdf", accept_multiple_files=True)
+chunks = []
+full_text = ""
+index = None
 
 if uploaded_files:
     all_pages = []
@@ -239,51 +242,116 @@ if uploaded_files:
             st.success(f"Ready: {len(all_pages)} text page(s), {len(chunks)} chunk(s).")
             st.divider()
 
-        st.subheader("📄 PDF Summary")
+# ==========================================
+# SESSION STATE INITIALISATION
+# ==========================================
 
-        if st.button("Generate Summary"):
-            with st.spinner("Generating your PDF summary..."):
-                summary = create_summary(full_text)
+if "answer" not in st.session_state:
+    st.session_state.answer = None
 
-            st.markdown("### Document Summary")
-            st.markdown(summary)
-            
-            st.subheader("Ask a question")
-            question = st.text_input("Type your question about the PDF")
-            if st.button("Get answer"):
-                if not question.strip():
-                    st.warning("Please type a question first.")
-                else:
-                    with st.spinner("Finding the answer..."):
-                        matches = retrieve(question, chunks, index)
-                        answer = answer_question(question, matches)
-                    st.markdown("### Answer")
-                    st.write(answer)
-                    st.markdown("### Sources")
-                    for m in matches:
-                        st.divider()
-                        st.write(f"Page {m['page']}")
-                        st.write(m['text'])
+if "matches" not in st.session_state:
+    st.session_state.matches = None
 
-            st.divider()
+if "summary" not in st.session_state:
+    st.session_state.summary = None
 
-            st.subheader("Generate MCQ Quiz")
+if "quiz" not in st.session_state:
+    st.session_state.quiz = None
 
-            full_text = "\n\n".join(
-                item["text"] for item in all_pages
+if "pdf_signature" not in st.session_state:
+    st.session_state.pdf_signature = None
+
+
+# ==========================================
+# RESET RESULTS WHEN A NEW PDF IS UPLOADED
+# ==========================================
+
+current_pdf_signature = tuple(
+    (pdf.name, pdf.size, hash(pdf.getvalue()))
+    for pdf in (uploaded_files or [])
+)
+if current_pdf_signature != st.session_state.pdf_signature:
+    st.session_state.answer = None
+    st.session_state.matches = None
+    st.session_state.summary = None
+    st.session_state.quiz = None
+    st.session_state.pdf_signature = current_pdf_signature
+
+
+# ==========================================
+# DISPLAY FEATURES WHEN PDF IS PROCESSED
+# ==========================================
+
+if uploaded_files and chunks and full_text and index is not None:
+
+    # --------------------------------------
+    # 1. GENERATE SUMMARY
+    # --------------------------------------
+
+    st.subheader("📄 PDF Summary")
+
+    if st.button("Generate Summary"):
+        with st.spinner("Generating your PDF summary..."):
+            st.session_state.summary = create_summary(full_text)
+
+    if st.session_state.summary:
+        st.markdown("### Document Summary")
+        st.markdown(st.session_state.summary)
+
+    # --------------------------------------
+    # 2. ASK A QUESTION
+    # --------------------------------------
+
+    st.divider()
+    st.subheader("💬 Ask a Question")
+
+    question = st.text_input(
+        "Type your question about the PDF",
+        key="question_input"
+    )
+
+    if st.button("Get Answer"):
+        if not question.strip():
+            st.warning("Please enter a question.")
+        else:
+            with st.spinner("Finding the answer..."):
+                matches = retrieve(question, chunks, index)
+                st.session_state.answer = answer_question(question, matches)
+                st.session_state.matches = matches
+
+    if st.session_state.answer:
+        st.markdown("### Answer")
+        st.markdown(st.session_state.answer)
+        if st.session_state.matches:
+            st.markdown("### Sources")
+            for m in st.session_state.matches:
+                st.divider()
+                st.write(f"Page {m['page']}")
+                st.write(m["text"])
+
+    # --------------------------------------
+    # 3. GENERATE QUIZ
+    # --------------------------------------
+
+    st.divider()
+    st.subheader("📝 Generate Quiz")
+
+    number_of_questions = st.selectbox(
+        "Select number of questions",
+        [5, 10, 15],
+        key="quiz_question_count"
+    )
+
+    if st.button("Generate Quiz"):
+        with st.spinner("Generating your quiz..."):
+            st.session_state.quiz = create_quiz(
+                full_text,
+                number_of_questions
             )
 
-            question_count = st.selectbox(
-                "Number of questions",
-                [5, 10, 15]
-            )
+    if st.session_state.quiz:
+        st.markdown("### Generated Quiz")
+        st.markdown(st.session_state.quiz)
 
-            if st.button("Generate Quiz"):
-                with st.spinner("Generating your quiz..."):
-                    quiz = create_quiz(
-                        full_text,
-                        question_count
-                    )
-
-                st.markdown("### Your MCQ Quiz")
-                st.write(quiz)
+else:
+    st.info("Please upload a PDF containing readable text to continue.")
